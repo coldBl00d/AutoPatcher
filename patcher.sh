@@ -17,8 +17,8 @@ if [ -d $patchFolder ]; then
 	echo "If youre only seeing bloop.jar then you did not copy your jars!!"
 	for file in ./orcl/*.jar; do
 	        echo "$(basename "$file")"
-	        find  /scratch/aime/work/APPTOP/fusionapps/applications/crm/deploy -type f -iname "$(basename "$file")" > loc.txt 
-	        #this is crap but works, rewrite backup 
+	        find  $startPath -type f -iname "$(basename "$file")" > loc.txt 
+	        #TODO this is crap but works, rewrite backup 
 	        while read location; do 
 	        	cp $location ./backup_cb 
 	        	echo "backed up server copy of " "$(basename "$file")"
