@@ -1,5 +1,8 @@
 #!/bin/bash
 #TODO
+#support flags
+#support selecting servers to patch
+#support rel13 
 #parametrize patch folder ? 
 #fetch mode to just fetch server jar for manual patching 
 #restore mode to restore changes from ./backup_cb 
@@ -34,7 +37,9 @@ if [ -d $patchFolder ]; then
 	        echo "Patched " "$(basename "$file")"
 	        >loc.txt 
 	done
-else 
+else
+	#when orcl directory is not found, create a one and init a file in it to prevent infinite looping
+	#not sure why the loop happens 
 	echo "orcl directory not found, place all your jars there. I just created the folder for you :)"
 	echo "Please dont touch the bloop :D"
 	mkdir ./orcl
