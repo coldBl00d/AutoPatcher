@@ -1,6 +1,6 @@
 #!/bin/bash
 #TODO
-#support flags
+#support flags <OnGoing> 
 #support selecting servers to patch
 #support rel13 
 #parametrize patch folder ? 
