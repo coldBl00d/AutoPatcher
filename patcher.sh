@@ -1,4 +1,5 @@
 #!/bin/bash
+
 #TODO
 #support flags <OnGoing> 
 #support selecting servers to patch
@@ -14,6 +15,26 @@ extraDelim="/"
 startPath="/scratch/aime/work/APPTOP/fusionapps/applications/crm/deploy"
 patchFolder="./orcl"
 
+rel13=false
+
+while getopts "r:" opt; do
+  case $opt in
+    r)
+      echo "-r was triggered, Parameter: $OPTARG" >&2
+      if [ $OPTARG eq "13"]; then 
+      	rel13=true
+        echo "Patching R13 Environment"
+      fi 
+    \?)
+      echo "Invalid option: -$OPTARG" >&2
+      exit 1
+      ;;
+    :)
+      echo "Option -$OPTARG requires an argument." >&2
+      exit 1
+      ;;
+  esac
+done
 
 if [ -d $patchFolder ]; then 
 	touch ./orcl/bloop.jar
