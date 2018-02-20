@@ -17,14 +17,12 @@ patchFolder="./orcl"
 
 rel13=false
 
-while getopts "r:" opt; do
+while getopts "r" opt; do
   case $opt in
     r)
       echo "-r was triggered, Parameter: $OPTARG" >&2
-      if [ $OPTARG eq "13"]; then 
-      	rel13=true
-        echo "Patching R13 Environment"
-      fi 
+      rel13=true
+      echo "Patching R13 Environment"
     \?)
       echo "Invalid option: -$OPTARG" >&2
       exit 1
