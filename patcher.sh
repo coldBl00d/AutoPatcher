@@ -23,6 +23,7 @@ while getopts "r" opt; do
       echo "-r was triggered, Parameter: $OPTARG" >&2
       rel13=true
       echo "Patching R13 Environment"
+	  ;;
     \?)
       echo "Invalid option: -$OPTARG" >&2
       exit 1
