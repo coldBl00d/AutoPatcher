@@ -25,11 +25,13 @@ rel12=1 #flag for determining which release to patch, default to rel12
 #method to back up modifing jars by reading from a list of jar from manifest
 backup_jars(){
 	echo "Starting backup_jars()::"
-	cat manifest.txt| grep -i "#" >jarNames.txt #filter every jar names from manifest in form of #<jar-name>
+	#cat manifest.txt| grep -i "#" >jarNames.txt #filter every jar names from manifest in form of #<jar-name>
 	while read jarName; do #for every jarName in jarNames.txt
-		r_jarName=$(echo $jarName | cut -c 2-) #cut of the '#' sign 
-		echo "backing up jar r_jarName"
-		find  $startPath -type f -iname "$(basename "$file")" > jar_loc.txt #location of current jar r_jarName 
+		echo "backing up jar $jarName"
+		echo "Searching from start location " "$startPath"
+		find  $startPath -type f -iname '$jarName'
+		find  $startPath -type f -iname $jarName > jar_loc.txt #location of current jar r_jarName 
+		cat jar_loc.txt
 		while read jloc; do
 			echo "Backing up : $jloc" 
 		    cp $jloc ./backup_cb  
@@ -37,16 +39,15 @@ backup_jars(){
 		    break
 		done<jar_loc.txt 
 		>jar_loc.txt #clear jar_loc for next jar 
-	done<jarNames.txt
+	done<manifest.txt
 	rm jar_loc.txt #delete working file
-	rm jarNames.txt
 	echo "Ending backup_jars()::"
 }
 
 while getopts "r" opt; do
   case $opt in
     r)
-      echo "-r was triggered, Parameter: $OPTARG" >&2
+      echo "-r was triggered" >&2
       rel12=0
 	  ;;
     \?)
@@ -60,7 +61,7 @@ while getopts "r" opt; do
   esac
 done
 
-if [ $rel12=1 ]; then 
+if [ $rel12 -eq 1 ]; then 
 	echo "***Patch tool for Release 12***"
 	startPath="/scratch/aime/work/APPTOP/fusionapps/applications/crm/deploy"
 	if [ -d $patchFolder ]; then 
@@ -95,6 +96,6 @@ if [ $rel12=1 ]; then
 	fi
 else 
 	echo "***Patch tool for Release 13***"
-	startPath="/u01/APPLTOP/fusionapps/applications/fa/deploy/oracle.apps.fa.model.ear/"
+	startPath="/u01/APPLTOP/fusionapps/applications/fa/deploy/oracle.apps.fa.model.ear"
 	backup_jars
 fi 
