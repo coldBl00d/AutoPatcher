@@ -3,9 +3,9 @@
 #TODO 
 #support selecting servers to patch
 #support rel13 <onGoing> 
-#0) Better backup 
+#0) Better backup <done>
 #1) class file based patching 
-#2) Jar Based
+#2) Jar Based <onGoing>
 #3) Restore from backup 
 #4) basic backup jars 
 #5) copy relevant class files from jars to orcl_class folder 
@@ -21,6 +21,7 @@ extraDelim="/"
 startPath=""
 patchFolder="./orcl"
 rel12=1 #flag for determining which release to patch, default to rel12 
+mode_jar=0
 
 #intended as a crappy way to backup jars in r13, since find was not working reading from manifest 
 #That was because manifest created in windows had some hidden characters 
@@ -60,30 +61,7 @@ backup_jars(){
 	echo "End backup_jars()::"
 }
 
-
-#r switch starts rel12 mode 
-#default r13 mode. 
-
-while getopts "r" opt; do
-  case $opt in
-    r)
-      echo "-r was triggered" >&2
-      rel12=0
-	  ;;
-    \?)
-      echo "Invalid option: -$OPTARG" >&2
-      exit 1
-      ;;
-    :)
-      echo "Option -$OPTARG requires an argument." >&2
-      exit 1
-      ;;
-  esac
-done
-
-if [ $rel12 -eq 1 ]; then 
-	echo "***Patch tool for Release 12***"
-	startPath="/scratch/aime/work/APPTOP/fusionapps/applications/crm/deploy"
+patch_jars(){
 	if [ -d $patchFolder ]; then 
 		touch ./orcl/bloop.jar
 		echo "If youre only seeing bloop.jar then you did not copy your jars!!"
@@ -114,9 +92,42 @@ if [ $rel12 -eq 1 ]; then
 		mkdir ./orcl
 		touch ./orcl/bloop.jar
 	fi
+}
+#r switch starts rel12 mode 
+#default r13 mode. 
+
+while getopts "rj" opt; do
+  case $opt in
+    r)
+      echo "-r was triggered" >&2
+      rel12=0
+	  ;;
+	j)
+	  echo "jar mode triggered"
+	  mode_jar=1
+	  ;;
+    \?)
+      echo "Invalid option: -$OPTARG" >&2
+      exit 1
+      ;;
+    :)
+      echo "Option -$OPTARG requires an argument." >&2
+      exit 1
+      ;;
+  esac
+done
+
+if [ $rel12 -eq 1 ]; then 
+	echo "***Patch tool for Release 12***"
+	startPath="/scratch/aime/work/APPTOP/fusionapps/applications/crm/deploy"
+	patch_jars
 else
 	echo "***Patch tool for Release 13***"
 	startPath="/u01/APPLTOP/fusionapps/applications/fa/deploy/oracle.apps.fa.model.ear"
 	#add check here if it is actually a rel13 environment. 
 	backup_jars
+	if [ $mode_jar -eq 1 ]; then
+		patch_jars
+		exit
+	fi 
 fi
