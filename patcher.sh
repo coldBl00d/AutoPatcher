@@ -45,9 +45,14 @@ backup_jars(){
 		cat jar_loc.txt
 		while read jloc; do
 			echo "Backing up from: $jloc" 
-		    cp $jloc ./backup_cb  
+		    #cp $jloc ./backup_cb  
+		    #make folder structure in here 
+		    folder_path=./backup_cb$(echo $jloc | rev | cut -d"/" -f2-  | rev)
+		    if [ ! -d $folder_path ]; then
+		    	 mkdir -p $folder_path
+			fi
+		    cp $jloc $folder_path
 		    echo "Backed up"
-		    break
 		done<jar_loc.txt 
 		>jar_loc.txt #clear jar_loc for next jar 
 	done<manifest.txt
