@@ -1,16 +1,15 @@
 #!/bin/bash
 
-#TODO
-#support flags <done> 
+#TODO 
 #support selecting servers to patch
 #support rel13 <onGoing> 
-#1) class file based 
+#0) Better backup 
+#1) class file based patching 
 #2) Jar Based
-
-#TODO 
-#1) backup jars 
-#2) copy relevant class files from jars to orcl_class folder 
-#3) patch class to jar
+#3) Restore from backup 
+#4) basic backup jars 
+#5) copy relevant class files from jars to orcl_class folder 
+#6) patch class to jar
 #parametrize patch folder ? 
 #fetch mode to just fetch server jar for manual patching 
 #restore mode to restore changes from ./backup_cb 
