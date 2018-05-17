@@ -6,6 +6,7 @@
 #support rel13 <onGoing> 
 #1) class file based 
 #2) Jar Based
+
 #TODO 
 #1) backup jars 
 #2) copy relevant class files from jars to orcl_class folder 
@@ -22,27 +23,42 @@ startPath=""
 patchFolder="./orcl"
 rel12=1 #flag for determining which release to patch, default to rel12 
 
+#intended as a crappy way to backup jars in r13, since find was not working reading from manifest 
+#That was because manifest created in windows had some hidden characters 
+create_temp(){
+	mkdir ./tmp
+	while read jarName; do
+		touch ./tmp/$jarName 
+	done<manifest.txt
+}
+
 #method to back up modifing jars by reading from a list of jar from manifest
 backup_jars(){
-	echo "Starting backup_jars()::"
+	echo "Start backup_jars()::"
 	#cat manifest.txt| grep -i "#" >jarNames.txt #filter every jar names from manifest in form of #<jar-name>
+	echo "Searching from start location " "$startPath"
 	while read jarName; do #for every jarName in jarNames.txt
-		echo "backing up jar $jarName"
-		echo "Searching from start location " "$startPath"
-		find  $startPath -type f -iname '$jarName'
+		echo "Starting Back up of $jarName"
+		echo "Searching for location of $jarName"
+		find  $startPath -type f -iname "$jarName"
 		find  $startPath -type f -iname $jarName > jar_loc.txt #location of current jar r_jarName 
+		echo "Estimated locations:"
 		cat jar_loc.txt
 		while read jloc; do
-			echo "Backing up : $jloc" 
+			echo "Backing up from: $jloc" 
 		    cp $jloc ./backup_cb  
-		    echo "backed up server copy of '$jarName'"
+		    echo "Backed up"
 		    break
 		done<jar_loc.txt 
 		>jar_loc.txt #clear jar_loc for next jar 
 	done<manifest.txt
 	rm jar_loc.txt #delete working file
-	echo "Ending backup_jars()::"
+	echo "End backup_jars()::"
 }
+
+
+#r switch starts rel12 mode 
+#default r13 mode. 
 
 while getopts "r" opt; do
   case $opt in
@@ -94,8 +110,9 @@ if [ $rel12 -eq 1 ]; then
 		mkdir ./orcl
 		touch ./orcl/bloop.jar
 	fi
-else 
+else
 	echo "***Patch tool for Release 13***"
 	startPath="/u01/APPLTOP/fusionapps/applications/fa/deploy/oracle.apps.fa.model.ear"
+	#add check here if it is actually a rel13 environment. 
 	backup_jars
-fi 
+fi
